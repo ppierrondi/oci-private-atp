@@ -18,45 +18,8 @@ for Python.
 Clone the repo from github by executing the command as follows and then go to terraform-oci-private-atp directory:
 
 ```
-[opc@terraform-server ~]$ git clone https://github.com/mlinxfeld/terraform-oci-private-atp.git
-Cloning into 'terraform-oci-private-atp'...
-remote: Enumerating objects: 45, done.
-remote: Counting objects: 100% (45/45), done.
-remote: Compressing objects: 100% (31/31), done.
-remote: Total 45 (delta 19), reused 40 (delta 14), pack-reused 0
-Unpacking objects: 100% (45/45), done.
+git clone 
 
-[opc@terraform-server ~]$ cd terraform-oci-private-atp/
-
-[opc@terraform-server terraform-oci-private-atp]$ ls -latr
-total 1044
-drwx------. 22 opc opc   4096 03-01 17:49 ..
--rw-rw-r--.  1 opc opc   7643 03-01 17:49 README.md
--rw-rw-r--.  1 opc opc    185 03-01 17:49 compartment.tf
--rw-rw-r--.  1 opc opc    657 03-01 17:49 atp_wallet.tf
--rw-rw-r--.  1 opc opc   1524 03-01 17:49 atp.tf
--rw-rw-r--.  1 opc opc    422 03-01 17:49 route2.tf
--rw-rw-r--.  1 opc opc    431 03-01 17:49 route1.tf
--rw-rw-r--.  1 opc opc    238 03-01 17:49 provider.tf
--rw-rw-r--.  1 opc opc    235 03-01 17:49 natgateway.tf
--rw-rw-r--.  1 opc opc    250 03-01 17:49 internet_gateway.tf
--rw-rw-r--.  1 opc opc     83 03-01 17:49 flask_atp.sh
--rw-rw-r--.  1 opc opc    701 03-01 17:49 flask_atp.py
--rw-rw-r--.  1 opc opc    442 03-01 17:49 dhcp_options.tf
--rw-rw-r--.  1 opc opc   4856 03-01 17:49 config_mgmt_on_webserver1.tf
--rw-rw-r--.  1 opc opc    416 03-01 17:49 subnet_webserver.tf
--rw-rw-r--.  1 opc opc    432 03-01 17:49 subnet_atp_endpoint.tf
--rw-rw-r--.  1 opc opc    147 03-01 17:49 sqlnet.ora
--rw-rw-r--.  1 opc opc    775 03-01 17:49 security_group.tf
--rw-rw-r--.  1 opc opc   2605 03-01 17:49 security_group_rule.tf
--rwxrwxr-x.  1 opc opc   1199 03-01 17:49 webserver1.tf
--rw-rw-r--.  1 opc opc    224 03-01 17:49 vcn.tf
--rw-rw-r--.  1 opc opc   1619 03-01 17:49 variables.tf
--rw-rw-r--.  1 opc opc 960361 03-01 17:49 terraform-oci-private-atp.jpg
-drwxrwxr-x.  8 opc opc   4096 03-01 17:49 .git
-drwxrwxr-x.  3 opc opc   4096 03-01 17:49 .
-
-```
 
 ### STEP 2.
 
@@ -77,7 +40,7 @@ is 0.12.17. You can update by downloading from https://www.terraform.io/download
 Next create environment file with TF_VARs:
 
 ```
-[opc@terraform-server terraform-oci-private-atp]$ vi setup_oci_tf_vars.sh
+vi setup_oci_tf_vars.sh
 export TF_VAR_user_ocid="ocid1.user.oc1..aaaaaaaaob4qbf2(...)uunizjie4his4vgh3jx5jxa"
 export TF_VAR_tenancy_ocid="ocid1.tenancy.oc1..aaaaaaaas(...)krj2s3gdbz7d2heqzzxn7pe64ksbia"
 export TF_VAR_compartment_ocid="ocid1.tenancy.oc1..aaaaaaaasbktyckn(...)ldkrj2s3gdbz7d2heqzzxn7pe64ksbia"
@@ -95,7 +58,7 @@ export TF_VAR_atp_password='BEstrO0ng_#11'
 Run *terraform init* with upgrade option just to download the lastest neccesary providers:
 
 ```
-[opc@terraform-server terraform-oci-private-atp]$ terraform init -upgrade
+terraform init -upgrade
 
 Initializing the backend...
 
@@ -133,7 +96,7 @@ commands will detect it and remind you to do so if necessary.
 Run *terraform apply* to provision the content of this code (type **yes** to confirm the the apply phase):
 
 ```
-[opc@terraform-server terraform-oci-private-atp]$ terraform apply 
+terraform apply --auto-approve
 
 An execution plan has been generated and is shown below.
 Resource actions are indicated with the following symbols:
@@ -142,7 +105,7 @@ Resource actions are indicated with the following symbols:
 
 Terraform will perform the following actions:
 
-  # data.oci_core_vnic.FoggyKitchenWebserver1_VNIC1 will be read during apply
+  
 
 (...)
 
@@ -159,8 +122,6 @@ Apply complete! Resources: 26 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-FoggyKitchenWebserver1_PublicIP = [
-  "158.101.165.174",
 
 (...)
 
@@ -170,10 +131,9 @@ FoggyKitchenWebserver1_PublicIP = [
 Confirm that Flask-based webserver accessed succefully ATP and it can show database name (pick up Public IP of webserver from the step 5):
 
 ```
-[opc@terraform-server terraform-oci-private-atp]$ curl http://158.101.165.174/
+curl http://158.101.165.174/
 I am connected to ATP Database via private endpoint! ATP dbname taken from v$database view is EYB1POD
 
-[opc@terraform-server terraform-oci-private-atp]$
 ```
 
 
@@ -183,27 +143,6 @@ After testing the environment you can remove the whole OCI infra. You should jus
 ```
 [opc@terraform-server terraform-oci-private-atp]$ terraform destroy
 
-oci_identity_compartment.FoggyKitchenCompartment: Refreshing state... [id=ocid1.compartment.oc1..aaaaaaaagillnk7ttj6wpdhmewpibpxc5gbmrfxdtmaa3gfgjzbudesm3tsq]
-oci_core_virtual_network.FoggyKitchenVCN: Refreshing state... [id=ocid1.vcn.oc1.eu-frankfurt-1.amaaaaaadngk4gialu6ikx45brprlpzi2oyibbsl6slts36bar4vgcjlmgjq]
-(...)
-
-Plan: 0 to add, 0 to change, 26 to destroy.
-
-Do you really want to destroy all resources?
-  Terraform will destroy all your managed infrastructure, as shown above.
-  There is no undo. Only 'yes' will be accepted to confirm.
-
-  Enter a value: yes
-
-(...)
-
-oci_core_network_security_group.FoggyKitchenWebSecurityGroup: Destruction complete after 5s
-oci_core_virtual_network.FoggyKitchenVCN: Destroying... [id=ocid1.vcn.oc1.iad.amaaaaaac3adhhqat3gn63eiilexiwzgyrjoi6few7dcf36ilddupukf6mpa]
-oci_core_virtual_network.FoggyKitchenVCN: Destruction complete after 1s
-oci_identity_compartment.FoggyKitchenCompartment: Destroying... [id=ocid1.compartment.oc1..aaaaaaaarrlkyjshc4i7gqr56sydav2lpcdhhqwy2b72mj6iruy3r4z3j7ra]
-oci_identity_compartment.FoggyKitchenCompartment: Destruction complete after 0s
-
 Destroy complete! Resources: 26 destroyed.
 ```
-# oci-private-atp
 # oci-private-atp
